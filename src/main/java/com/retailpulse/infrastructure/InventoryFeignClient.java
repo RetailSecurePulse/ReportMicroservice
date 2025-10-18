@@ -1,10 +1,14 @@
 package com.retailpulse.infrastructure;
 
 import com.retailpulse.dto.InventoryTransactionDto;
+import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
 import com.retailpulse.dto.ProductResponseDto;
+import com.retailpulse.dto.TimeSearchFilterRequestDto;
 import com.retailpulse.infrastructure.config.FeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -20,10 +24,9 @@ import java.util.List;
 )
 public interface InventoryFeignClient {
 
-    @GetMapping("/api/inventoryTransaction")
-    List<InventoryTransactionDto> getTransactions(
-            @RequestParam("start") String start,
-            @RequestParam("end") String end
+    @PostMapping("/api/inventoryTransaction/withBusinessEntityDetails")
+    List<InventoryTransactionProductBusinessEntityResponseDto> getTransactions(
+            @RequestBody TimeSearchFilterRequestDto requestDto
     );
 
     @GetMapping("/api/products")

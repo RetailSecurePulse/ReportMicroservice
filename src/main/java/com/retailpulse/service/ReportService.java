@@ -3,9 +3,7 @@ package com.retailpulse.service;
 import com.retailpulse.controller.exception.ApplicationException;
 import com.retailpulse.domain.ReportDocument;
 import com.retailpulse.domain.port.InventoryPort;
-import com.retailpulse.dto.InventoryTransactionDto;
-import com.retailpulse.dto.ProductResponseDto;
-import com.retailpulse.dto.ReportSummaryDto;
+import com.retailpulse.dto.*;
 import com.retailpulse.infrastructure.ReportDocumentRepository;
 import com.retailpulse.service.report.ExcelReportExportService;
 import com.retailpulse.service.report.PdfReportExportService;
@@ -38,10 +36,9 @@ public class ReportService {
         this.reportDocumentRepository = reportDocumentRepository;
     }
 
-    public List<InventoryTransactionDto> findInventoryTransactions(Instant startDateTime, Instant endDateTime) {
-        return inventoryPort.fetchByDateRange(
-                DateUtil.convertInstantToString(startDateTime, DateUtil.DATE_TIME_FORMAT),
-                DateUtil.convertInstantToString(endDateTime, DateUtil.DATE_TIME_FORMAT));
+    public List<InventoryTransactionProductBusinessEntityResponseDto> findInventoryTransactions(Instant startDateTime, Instant endDateTime) {
+        TimeSearchFilterRequestDto requestDto = new TimeSearchFilterRequestDto(startDateTime, endDateTime);
+        return inventoryPort.fetchByDateRange(requestDto);
     }
 
     public List<ProductResponseDto> findAllProducts() {
@@ -49,7 +46,7 @@ public class ReportService {
     }
 
     public void exportInventoryTransactionsReport(HttpServletResponse response, Instant start, Instant end, String format) throws IOException {
-        List<InventoryTransactionDto> data = findInventoryTransactions(start, end);
+        List<InventoryTransactionProductBusinessEntityResponseDto> data = findInventoryTransactions(start, end);
         String title = "Inventory Transaction Report";
         String[] headers = {"S/No.", "Transaction ID", "SKU", "Description", "Quantity", "Source", "Destination", "Transaction Date Time"};
         exportReport(response, start, end, format, data, title, headers, new InventoryTransactionDataExtractor());

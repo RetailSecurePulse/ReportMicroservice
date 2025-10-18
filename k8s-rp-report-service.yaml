@@ -105,5 +105,5 @@ spec:
     - name: http
       port: 8088        # service port (inside cluster)
       targetPort: 8088  # container port
-      nodePort: 30088   # external port on each node (must be in 30000–32767)
+      nodePort: 30086   # external port on each node (must be in 30000–32767)
   type: NodePort

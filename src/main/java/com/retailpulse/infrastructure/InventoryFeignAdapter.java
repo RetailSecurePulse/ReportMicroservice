@@ -2,7 +2,9 @@ package com.retailpulse.infrastructure;
 
 import com.retailpulse.domain.port.InventoryPort;
 import com.retailpulse.dto.InventoryTransactionDto;
+import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
 import com.retailpulse.dto.ProductResponseDto;
+import com.retailpulse.dto.TimeSearchFilterRequestDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,8 +19,8 @@ public class InventoryFeignAdapter implements InventoryPort {
     }
 
     @Override
-    public List<InventoryTransactionDto> fetchByDateRange(String start, String end) {
-        return client.getTransactions(start, end);
+    public List<InventoryTransactionProductBusinessEntityResponseDto> fetchByDateRange(TimeSearchFilterRequestDto requestDto) {
+        return client.getTransactions(requestDto);
     }
 
     @Override

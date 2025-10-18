@@ -2,6 +2,7 @@ package com.retailpulse.controller;
 
 import com.retailpulse.controller.exception.ApplicationException;
 import com.retailpulse.dto.InventoryTransactionDto;
+import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
 import com.retailpulse.dto.ReportSummaryDto;
 import com.retailpulse.service.ReportService;
 import com.retailpulse.util.DateUtil;
@@ -71,9 +72,9 @@ public class ReportController {
     }
 
     @GetMapping("/inventory-transactions")
-    public List<InventoryTransactionDto> getInventoryTransactions(@RequestParam("startDateTime") String startDateTime,
-                                                                  @RequestParam("endDateTime") String endDateTime,
-                                                                  @RequestParam("dateTimeFormat") String dateTimeFormat) {
+    public List<InventoryTransactionProductBusinessEntityResponseDto> getInventoryTransactions(@RequestParam("startDateTime") String startDateTime,
+                                                                                               @RequestParam("endDateTime") String endDateTime,
+                                                                                               @RequestParam("dateTimeFormat") String dateTimeFormat) {
         logger.info("Fetching all inventory transactions");
 
         if (startDateTime == null || startDateTime.isBlank()) {
