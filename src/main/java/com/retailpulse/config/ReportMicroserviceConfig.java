@@ -40,10 +40,11 @@ public class ReportMicroserviceConfig {
           )
       );
 
-      http.authorizeHttpRequests(
-        c -> c.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-          .requestMatchers("/hello").authenticated()
-          .requestMatchers("/api/**").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
+      http.authorizeHttpRequests(c -> c
+        .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
+        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+        .requestMatchers("/hello").authenticated()
+        .requestMatchers("/api/**").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
       );
     } else {
       System.out.println("No auth enabled");
