@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -148,7 +149,7 @@ public class ReportServiceTest {
 
         verify(reportDocumentRepository).save(any(ReportDocument.class));
         assertEquals("application/pdf", response.getContentType());
-        assertTrue(response.getHeader("Content-Disposition").contains("attachment; filename="));
+        assertTrue(Objects.requireNonNull(response.getHeader("Content-Disposition")).contains("attachment; filename="));
     }
 
 }
