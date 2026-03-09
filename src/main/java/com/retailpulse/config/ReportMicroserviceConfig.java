@@ -44,7 +44,8 @@ public class ReportMicroserviceConfig {
         .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .requestMatchers("/hello").authenticated()
-        .requestMatchers("/api/**").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
+        .requestMatchers("/api/reports/**").hasAnyRole("ADMIN", "MANAGER")
+        .anyRequest().authenticated()
       );
     } else {
       System.out.println("No auth enabled");
