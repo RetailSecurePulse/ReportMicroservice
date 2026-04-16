@@ -1,7 +1,6 @@
 package com.retailpulse.controller;
 
 import com.retailpulse.controller.exception.ApplicationException;
-import com.retailpulse.dto.InventoryTransactionDto;
 import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
 import com.retailpulse.dto.ReportSummaryDto;
 import com.retailpulse.service.ReportService;

@@ -1,7 +1,6 @@
 package com.retailpulse.infrastructure;
 
 import com.retailpulse.domain.port.InventoryPort;
-import com.retailpulse.dto.InventoryTransactionDto;
 import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
 import com.retailpulse.dto.ProductResponseDto;
 import com.retailpulse.dto.TimeSearchFilterRequestDto;

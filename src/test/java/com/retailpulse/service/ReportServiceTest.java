@@ -1,26 +1,41 @@
 package com.retailpulse.service;
 
+import com.retailpulse.controller.exception.ApplicationException;
 import com.retailpulse.domain.ReportDocument;
 import com.retailpulse.domain.port.InventoryPort;
+import com.retailpulse.dto.BusinessEntityDto;
+import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
+import com.retailpulse.dto.InventoryTransactionResponseDto;
 import com.retailpulse.dto.ProductResponseDto;
+import com.retailpulse.dto.ReportSummaryDto;
+import com.retailpulse.dto.TimeSearchFilterRequestDto;
 import com.retailpulse.infrastructure.ReportDocumentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ReportServiceTest {
+class ReportServiceTest {
 
     @Mock
     private InventoryPort inventoryPort;
@@ -31,67 +46,29 @@ public class ReportServiceTest {
     @InjectMocks
     private ReportService reportService;
 
-//    @Test
-//    void testFindInventoryTransactions_ReturnsExpectedList() {
-//        Instant start = Instant.parse("2024-01-01T00:00:00Z");
-//        Instant end = Instant.parse("2024-01-02T00:00:00Z");
-//        List<InventoryTransactionDto> expected = List.of(
-//                new InventoryTransactionDto("T-001",
-//                        new ProductResponseDto("SKU-100", "Product 100", "Category A", "Subcategory A", "Brand X"),
-//                        new ProductPricingDto(3, 100.5),
-//                        new BusinessEntityDto("Store A", "Store 1", "STORE"),
-//                        new BusinessEntityDto("Store B", "Store 2", "STORE"),
-//                        "2024-01-01T10:00:00Z"
-//                ),
-//                new InventoryTransactionDto("T-002",
-//                        new ProductResponseDto("SKU-200", "Product 200", "Category B", "Subcategory B", "Brand Y"),
-//                        new ProductPricingDto(5, 10.5),
-//                        new BusinessEntityDto("Store F", "Store 5", "STORE"),
-//                        new BusinessEntityDto("Store G", "Store 7", "STORE"),
-//                        "2024-02-02T20:00:00Z"
-//                )
-//        );
-//
-//        when(inventoryPort.fetchByDateRange(anyString(), anyString())).thenReturn(expected);
-//
-//        List<InventoryTransactionDto> result = reportService.findInventoryTransactions(start, end);
-//
-//        assertEquals(expected, result);
-//        verify(inventoryPort).fetchByDateRange(anyString(), anyString());
-//    }
+    @Test
+    void findInventoryTransactions_returnsExpectedListAndPassesRequestDto() {
+        Instant start = Instant.parse("2024-01-01T00:00:00Z");
+        Instant end = Instant.parse("2024-01-02T00:00:00Z");
+        List<InventoryTransactionProductBusinessEntityResponseDto> expected = List.of(sampleTransaction());
+
+        when(inventoryPort.fetchByDateRange(any(TimeSearchFilterRequestDto.class))).thenReturn(expected);
+
+        List<InventoryTransactionProductBusinessEntityResponseDto> result =
+                reportService.findInventoryTransactions(start, end);
+
+        ArgumentCaptor<TimeSearchFilterRequestDto> requestCaptor =
+                ArgumentCaptor.forClass(TimeSearchFilterRequestDto.class);
+
+        assertEquals(expected, result);
+        verify(inventoryPort).fetchByDateRange(requestCaptor.capture());
+        assertEquals(start, requestCaptor.getValue().startDateTime());
+        assertEquals(end, requestCaptor.getValue().endDateTime());
+    }
 
     @Test
-    void testFindAllProducts_ReturnsExpectedList() {
-        List<ProductResponseDto> expected = List.of(
-                new ProductResponseDto(
-                        1L,
-                        "SKU123",
-                        "Sample Product",
-                        "Electronics",
-                        "Mobile Phones",
-                        "BrandX",
-                        "USA",
-                        "Piece",
-                        "VEND123",
-                        "BAR123456789",
-                        299.99,
-                        true
-                ),
-                new ProductResponseDto(
-                        2L,
-                        "SKU234",
-                        "Sample Product 2",
-                        "Electronics 2",
-                        "Mobile Phones 2",
-                        "BrandY",
-                        "USA",
-                        "Piece",
-                        "VEND124",
-                        "BAR123456780",
-                        799.99,
-                        true
-                )
-        );
+    void findAllProducts_returnsExpectedList() {
+        List<ProductResponseDto> expected = List.of(sampleProduct(1L, "SKU123"));
 
         when(inventoryPort.fetchAllProducts()).thenReturn(expected);
 
@@ -101,55 +78,153 @@ public class ReportServiceTest {
         verify(inventoryPort).fetchAllProducts();
     }
 
-//    @Test
-//    void testExportInventoryTransactionsReport_ExcelFormat_SavesReportAndSetsResponseHeaders() throws Exception {
-//        Instant start = Instant.parse("2024-01-01T00:00:00Z");
-//        Instant end = Instant.parse("2024-01-02T00:00:00Z");
-//        List<InventoryTransactionDto> data = List.of(
-//                new InventoryTransactionDto("T-001", null, null, null, null, "2024-01-01T10:00:00Z")
-//        );
-//        when(inventoryPort.fetchByDateRange(anyString(), anyString())).thenReturn(data);
-//
-//        // Use Spring's MockHttpServletResponse for testing
-//        jakarta.servlet.http.HttpServletResponse response = new org.springframework.mock.web.MockHttpServletResponse();
-//
-//        reportService.exportInventoryTransactionsReport(response, start, end, "excel");
-//
-//        // Verify repository save is called
-//        verify(reportDocumentRepository).save(any(ReportDocument.class));
-//
-//        // Optionally, assert response headers/content type
-//        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
-//        assertTrue(response.getHeader("Content-Disposition").contains("attachment; filename="));
-//    }
+    @Test
+    void exportInventoryTransactionsReport_excel_savesReportAndSetsResponseHeaders() throws IOException {
+        Instant start = Instant.parse("2024-01-01T00:00:00Z");
+        Instant end = Instant.parse("2024-01-02T00:00:00Z");
+        List<InventoryTransactionProductBusinessEntityResponseDto> data = List.of(sampleTransaction());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        when(inventoryPort.fetchByDateRange(any(TimeSearchFilterRequestDto.class))).thenReturn(data);
+
+        reportService.exportInventoryTransactionsReport(response, start, end, "excel");
+
+        ArgumentCaptor<ReportDocument> documentCaptor = ArgumentCaptor.forClass(ReportDocument.class);
+
+        verify(reportDocumentRepository).save(documentCaptor.capture());
+        assertEquals(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                response.getContentType()
+        );
+        assertTrue(Objects.requireNonNull(response.getHeader("Content-Disposition")).contains(".xlsx"));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        assertEquals("Inventory Transaction Report", documentCaptor.getValue().getReportType());
+        assertEquals(start, documentCaptor.getValue().getStartDateTime());
+        assertEquals(end, documentCaptor.getValue().getEndDateTime());
+        assertTrue(documentCaptor.getValue().getFileName().endsWith(".xlsx"));
+        assertTrue(documentCaptor.getValue().getContent().length > 0);
+    }
 
     @Test
-    void testExportProductReport_PdfFormat_SavesReportAndSetsResponseHeaders() throws Exception {
-        List<ProductResponseDto> data = List.of(
-                new ProductResponseDto(
-                        1L,
-                        "SKU123",
-                        "Sample Product",
-                        "Electronics",
-                        "Mobile Phones",
-                        "BrandX",
-                        "USA",
-                        "Piece",
-                        "VEND123",
-                        "BAR123456789",
-                        299.99,
-                        true
-                )
-        );
-        when(inventoryPort.fetchAllProducts()).thenReturn(data);
+    void exportProductReport_pdf_savesReportAndSetsResponseHeaders() throws IOException {
+        List<ProductResponseDto> data = List.of(sampleProduct(1L, "SKU123"));
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
-        jakarta.servlet.http.HttpServletResponse response = new org.springframework.mock.web.MockHttpServletResponse();
+        when(inventoryPort.fetchAllProducts()).thenReturn(data);
 
         reportService.exportProductReport(response, "pdf");
 
-        verify(reportDocumentRepository).save(any(ReportDocument.class));
+        ArgumentCaptor<ReportDocument> documentCaptor = ArgumentCaptor.forClass(ReportDocument.class);
+
+        verify(reportDocumentRepository).save(documentCaptor.capture());
         assertEquals("application/pdf", response.getContentType());
-        assertTrue(Objects.requireNonNull(response.getHeader("Content-Disposition")).contains("attachment; filename="));
+        assertTrue(Objects.requireNonNull(response.getHeader("Content-Disposition")).contains(".pdf"));
+        assertTrue(response.getContentAsByteArray().length > 0);
+        assertEquals("Product Report", documentCaptor.getValue().getReportType());
+        assertTrue(documentCaptor.getValue().getFileName().endsWith(".pdf"));
+        assertTrue(documentCaptor.getValue().getContent().length > 0);
     }
 
+    @Test
+    void exportProductReport_withUnsupportedFormat_throwsApplicationException() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        ApplicationException exception = assertThrows(
+                ApplicationException.class,
+                () -> reportService.exportProductReport(response, "csv")
+        );
+
+        assertEquals("INVALID_FORMAT", exception.getErrorCode());
+        assertEquals("Unsupported export format: csv", exception.getMessage());
+        verify(reportDocumentRepository, never()).save(any(ReportDocument.class));
+    }
+
+    @Test
+    void findAllReports_returnsMappedSummaries() {
+        Instant createdAt = Instant.parse("2024-01-03T12:00:00Z");
+        ReportDocument document = new ReportDocument(
+                "Product Report",
+                "report_20240103_120000.pdf",
+                new byte[]{1, 2, 3},
+                Instant.parse("2024-01-01T00:00:00Z"),
+                Instant.parse("2024-01-02T00:00:00Z")
+        );
+        document.setId("report-1");
+        document.setCreatedAt(createdAt);
+
+        when(reportDocumentRepository.findAllWithoutContent()).thenReturn(List.of(document));
+
+        List<ReportSummaryDto> result = reportService.findAllReports();
+
+        assertEquals(1, result.size());
+        assertEquals("report-1", result.getFirst().id());
+        assertEquals("Product Report", result.getFirst().reportType());
+        assertEquals("report_20240103_120000.pdf", result.getFirst().fileName());
+        assertEquals(createdAt, result.getFirst().createdAt());
+    }
+
+    @Test
+    void getContent_returnsSanitizedFileMetadataAndBytes() {
+        Instant createdAt = Instant.parse("2024-01-03T12:00:00Z");
+        byte[] bytes = "pdf-content".getBytes();
+        ReportDocument document = new ReportDocument();
+        document.setId("report-1");
+        document.setFileName("report\r\n.pdf");
+        document.setCreatedAt(createdAt);
+        document.setContent(bytes);
+
+        when(reportDocumentRepository.findById("report-1")).thenReturn(Optional.of(document));
+
+        ReportService.Content content = reportService.getContent("report-1");
+
+        assertEquals("report__.pdf", content.fileName());
+        assertEquals("application/pdf", content.mediaType().toString());
+        assertEquals(bytes.length, content.contentLength());
+        assertEquals(createdAt, content.createdAt());
+        assertNotNull(content.resource());
+        assertArrayEquals(bytes, content.resource().getByteArray());
+    }
+
+    @Test
+    void getContent_withoutBytes_throwsIllegalStateException() {
+        ReportDocument document = new ReportDocument();
+        document.setId("report-2");
+        document.setFileName("report.pdf");
+        document.setContent(new byte[0]);
+
+        when(reportDocumentRepository.findById("report-2")).thenReturn(Optional.of(document));
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> reportService.getContent("report-2")
+        );
+
+        assertEquals("Report has no content: report-2", exception.getMessage());
+    }
+
+    private InventoryTransactionProductBusinessEntityResponseDto sampleTransaction() {
+        return new InventoryTransactionProductBusinessEntityResponseDto(
+                new InventoryTransactionResponseDto("TXN-001", 3, 99.99, "2024-01-01T10:00:00Z"),
+                sampleProduct(1L, "SKU123"),
+                new BusinessEntityDto("Warehouse A", "Location A", "WAREHOUSE"),
+                new BusinessEntityDto("Store B", "Location B", "STORE")
+        );
+    }
+
+    private ProductResponseDto sampleProduct(Long id, String sku) {
+        return new ProductResponseDto(
+                id,
+                sku,
+                "Sample Product",
+                "Electronics",
+                "Mobile Phones",
+                "BrandX",
+                "USA",
+                "Piece",
+                "VEND123",
+                "BAR123456789",
+                299.99,
+                true
+        );
+    }
 }

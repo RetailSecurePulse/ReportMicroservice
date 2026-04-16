@@ -20,7 +20,7 @@ public class PdfReportExportService<T> extends AbstractReportExportService<T> {
     private final String[] headers;
     private final TableDataExtractor<T> extractor;
     private Document document;
-    private ByteArrayOutputStream baos;
+    private final ByteArrayOutputStream baos;
 
     // Constructor now accepts a flexible title
     public PdfReportExportService(String title, String[] headers, TableDataExtractor<T> extractor, ByteArrayOutputStream baos) {
@@ -60,7 +60,7 @@ public class PdfReportExportService<T> extends AbstractReportExportService<T> {
     }
 
     @Override
-    protected void writeTableHeader() throws IOException {
+    protected void writeTableHeader() {
         PdfPTable table = new PdfPTable(headers.length);
         table.setWidthPercentage(100);
         Font headerFont = new Font(Font.HELVETICA, 10, Font.BOLD);
@@ -72,7 +72,7 @@ public class PdfReportExportService<T> extends AbstractReportExportService<T> {
     }
 
     @Override
-    protected void writeTableData(List<T> data) throws IOException {
+    protected void writeTableData(List<T> data) {
         PdfPTable dataTable = new PdfPTable(headers.length);
         dataTable.setWidthPercentage(100);
         Font dataFont = new Font(Font.HELVETICA, 10, Font.NORMAL);
@@ -89,7 +89,7 @@ public class PdfReportExportService<T> extends AbstractReportExportService<T> {
     }
 
     @Override
-    protected void finalizeReport() throws IOException {
+    protected void finalizeReport() {
         document.close();
     }
 }

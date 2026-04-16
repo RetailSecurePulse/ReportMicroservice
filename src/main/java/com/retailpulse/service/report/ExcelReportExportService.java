@@ -21,7 +21,7 @@ public class ExcelReportExportService<T> extends AbstractReportExportService<T> 
     private final TableDataExtractor<T> extractor;
     private XSSFWorkbook workbook;
     private Sheet sheet;
-    private ByteArrayOutputStream baos;
+    private final ByteArrayOutputStream baos;
 
     // Added "title" as parameter for flexibility
     public ExcelReportExportService(String title, String[] headers, TableDataExtractor<T> extractor, ByteArrayOutputStream baos) {
@@ -32,7 +32,7 @@ public class ExcelReportExportService<T> extends AbstractReportExportService<T> 
     }
 
     @Override
-    protected void writeReportHeader(Instant start, Instant end) throws IOException {
+    protected void writeReportHeader(Instant start, Instant end) {
         workbook = new XSSFWorkbook();
         sheet = workbook.createSheet("Report");
 
@@ -65,7 +65,7 @@ public class ExcelReportExportService<T> extends AbstractReportExportService<T> 
     }
 
     @Override
-    protected void writeTableHeader() throws IOException {
+    protected void writeTableHeader() {
         // Write header row based on predetermined row index
         int headerRowIndex = (sheet.getRow(2) != null) ? sheet.getRow(2).getRowNum() : 2;
         Row headerRow = sheet.createRow(headerRowIndex);
@@ -76,7 +76,7 @@ public class ExcelReportExportService<T> extends AbstractReportExportService<T> 
     }
 
     @Override
-    protected void writeTableData(List<T> data) throws IOException {
+    protected void writeTableData(List<T> data) {
         // Data rows start after header row.
         int rowNum = (sheet.getRow(2) != null) ? 3 : 4;
         int serialNumber = 0;

@@ -1,6 +1,5 @@
 package com.retailpulse.infrastructure;
 
-import com.retailpulse.dto.InventoryTransactionDto;
 import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
 import com.retailpulse.dto.ProductResponseDto;
 import com.retailpulse.dto.TimeSearchFilterRequestDto;
@@ -9,7 +8,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 

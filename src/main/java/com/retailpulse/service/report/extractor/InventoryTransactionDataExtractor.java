@@ -10,7 +10,7 @@ public class InventoryTransactionDataExtractor implements TableDataExtractor<Inv
                 item.inventoryTransaction().id(),
                 item.product() != null ? item.product().sku() : "",
                 item.product() != null ? item.product().description() : "",
-                item.inventoryTransaction() != null ? item.inventoryTransaction().quantity() : "",
+                item.inventoryTransaction().quantity(),
                 item.source() != null ? item.source().name() : "",
                 item.destination() != null ? item.destination().name() : "",
                 item.inventoryTransaction().insertedAt()

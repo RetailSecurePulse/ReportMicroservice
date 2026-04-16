@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.retailpulse</groupId>
@@ -10,18 +10,18 @@
   <name>retailpulse-reportMicroservice</name>
 
   <properties>
-    <java.version>21</java.version>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <java.version>23</java.version>
+    <maven.compiler.source>23</maven.compiler.source>
+    <maven.compiler.target>23</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring.boot.version>3.5.7</spring.boot.version>
+    <spring.boot.version>4.0.5</spring.boot.version>
     <spring.cloud.version>2025.0.0</spring.cloud.version>
     <sonar.organization>retailpulse</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.projectKey>RetailPulse_ReportMicroservice</sonar.projectKey>
+    <sonar.projectKey>RetailSecurePulse_ReportMicroservice</sonar.projectKey>
     <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
-  
+
   <profiles>
     <profile>
       <id>default</id>
@@ -69,7 +69,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <build>
     <plugins>
       <!-- Maven Compiler Plugin with Lombok annotation processing -->
@@ -85,7 +85,7 @@
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>1.18.42</version> 
+              <version>1.18.42</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
@@ -152,8 +152,8 @@
     </plugins>
   </build>
 
-  <dependencies>    
-    
+  <dependencies>
+
     <!-- Lombok dependency -->
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -165,7 +165,7 @@
     <!-- JUnit 5 API -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>      
+      <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -190,6 +190,18 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test-autoconfigure</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Spring Boot Starter for OAuth2 Resource Server -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -206,6 +218,19 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>11.0.21</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>3.1.1</version>
+      <scope>compile</scope>
     </dependency>
 
     <!-- Spring Cloud Feign -->
