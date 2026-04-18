@@ -1,6 +1,5 @@
 package com.retailpulse.service.report;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
