@@ -3,12 +3,7 @@ package com.retailpulse.service;
 import com.retailpulse.controller.exception.ApplicationException;
 import com.retailpulse.domain.ReportDocument;
 import com.retailpulse.domain.port.InventoryPort;
-import com.retailpulse.dto.BusinessEntityDto;
-import com.retailpulse.dto.InventoryTransactionProductBusinessEntityResponseDto;
-import com.retailpulse.dto.InventoryTransactionResponseDto;
-import com.retailpulse.dto.ProductResponseDto;
-import com.retailpulse.dto.ReportSummaryDto;
-import com.retailpulse.dto.TimeSearchFilterRequestDto;
+import com.retailpulse.dto.*;
 import com.retailpulse.infrastructure.ReportDocumentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,15 +19,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReportServiceTest {
