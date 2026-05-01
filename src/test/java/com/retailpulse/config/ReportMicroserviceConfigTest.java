@@ -35,7 +35,7 @@ class ReportMicroserviceConfigTest {
         CorsConfiguration corsConfiguration = source.getCorsConfiguration(new MockHttpServletRequest());
 
         assert corsConfiguration != null;
-        assertEquals(List.of("http://frontend.example"), corsConfiguration.getAllowedOrigins());
+        assertEquals(List.of("http://frontend.example"), corsConfiguration.getAllowedOriginPatterns());
         assertEquals(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"), corsConfiguration.getAllowedMethods());
         assertEquals(List.of("Authorization", "Content-Type"), corsConfiguration.getAllowedHeaders());
         assertEquals(List.of("Authorization"), corsConfiguration.getExposedHeaders());

@@ -21,7 +21,7 @@
     <maven.compiler.target>23</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spring.boot.version>4.0.5</spring.boot.version>
-    <spring.cloud.version>2025.0.0</spring.cloud.version>
+    <spring.cloud.version>2025.1.1</spring.cloud.version>
     <sonar.organization>retailsecurepulse</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.projectKey>RetailSecurePulse_ReportMicroservice</sonar.projectKey>

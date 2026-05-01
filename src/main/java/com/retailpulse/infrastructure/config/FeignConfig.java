@@ -33,7 +33,7 @@ public class FeignConfig {
     public RequestInterceptor oauth2BearerForwardingInterceptor() {
         return template -> {
 
-            if (tracer.currentSpan() != null) {
+            if (tracer != null && tracer.currentSpan() != null) {
                 template.header("X-B3-TraceId", Objects.requireNonNull(tracer.currentSpan()).context().traceId());
                 template.header("X-B3-SpanId", Objects.requireNonNull(tracer.currentSpan()).context().spanId());
             }
