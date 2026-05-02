@@ -113,6 +113,17 @@ class ReportControllerTest {
     }
 
     @Test
+    void getInventoryTransactions_withBlankEnd_throwsApplicationException() {
+        ApplicationException exception = assertThrows(
+                ApplicationException.class,
+                () -> reportController.getInventoryTransactions("2024-01-01 00:00:00", " ", "yyyy-MM-dd HH:mm:ss")
+        );
+
+        assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
+        assertEquals("End date time parameter cannot be blank", exception.getMessage());
+    }
+
+    @Test
     void getInventoryTransactions_withInvalidDateFormat_throwsApplicationException() {
         ApplicationException exception = assertThrows(
                 ApplicationException.class,
@@ -181,6 +192,25 @@ class ReportControllerTest {
 
         assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
         assertEquals("Date time parameters cannot be blank", exception.getMessage());
+    }
+
+    @Test
+    void exportInventoryTransactionReport_withStartAfterEnd_throwsApplicationException() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        ApplicationException exception = assertThrows(
+                ApplicationException.class,
+                () -> reportController.exportInventoryTransactionReport(
+                        response,
+                        "2024-01-03 00:00:00",
+                        "2024-01-02 00:00:00",
+                        "yyyy-MM-dd HH:mm:ss",
+                        "pdf"
+                )
+        );
+
+        assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
+        assertEquals("Start date time cannot be after end date time", exception.getMessage());
     }
 
     @Test

@@ -135,6 +135,22 @@ class FeignConfigTest {
         assertFalse(template.headers().containsKey(HttpHeaders.AUTHORIZATION));
     }
 
+    @Test
+    void interceptor_withNonBearerIncomingAuthorizationHeader_doesNotSetAuthorizationHeader() {
+        when(tracer.currentSpan()).thenReturn(null);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic credentials");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        RequestTemplate template = requestTemplate();
+        RequestInterceptor interceptor = new FeignConfig(tracerProvider(tracer)).oauth2BearerForwardingInterceptor();
+
+        interceptor.apply(template);
+
+        assertFalse(template.headers().containsKey(HttpHeaders.AUTHORIZATION));
+    }
+
     private RequestTemplate requestTemplate() {
         RequestTemplate template = new RequestTemplate();
         template.method(Request.HttpMethod.GET);

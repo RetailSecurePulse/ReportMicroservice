@@ -191,6 +191,56 @@ class ReportServiceTest {
         assertEquals("Report has no content: report-2", exception.getMessage());
     }
 
+    @Test
+    void getContent_withNullBytes_throwsIllegalStateException() {
+        ReportDocument document = new ReportDocument();
+        document.setId("report-3");
+        document.setFileName("report.pdf");
+        document.setContent(null);
+
+        when(reportDocumentRepository.findById("report-3")).thenReturn(Optional.of(document));
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> reportService.getContent("report-3")
+        );
+
+        assertEquals("Report has no content: report-3", exception.getMessage());
+    }
+
+    @Test
+    void getContent_withNullFileName_usesFallbackFileName() {
+        byte[] bytes = "content".getBytes();
+        ReportDocument document = new ReportDocument();
+        document.setId("report-4");
+        document.setFileName(null);
+        document.setContent(bytes);
+
+        when(reportDocumentRepository.findById("report-4")).thenReturn(Optional.of(document));
+
+        ReportService.Content content = reportService.getContent("report-4");
+
+        assertEquals("report-report-4", content.fileName());
+        assertEquals("application/octet-stream", content.mediaType().toString());
+        assertEquals(bytes.length, content.contentLength());
+    }
+
+    @Test
+    void getContent_withBlankFileName_usesFallbackFileName() {
+        byte[] bytes = "content".getBytes();
+        ReportDocument document = new ReportDocument();
+        document.setId("report-5");
+        document.setFileName("  ");
+        document.setContent(bytes);
+
+        when(reportDocumentRepository.findById("report-5")).thenReturn(Optional.of(document));
+
+        ReportService.Content content = reportService.getContent("report-5");
+
+        assertEquals("report-report-5", content.fileName());
+        assertEquals(bytes.length, content.contentLength());
+    }
+
     private InventoryTransactionProductBusinessEntityResponseDto sampleTransaction() {
         return new InventoryTransactionProductBusinessEntityResponseDto(
                 new InventoryTransactionResponseDto("TXN-001", 3, 99.99, "2024-01-01T10:00:00Z"),
