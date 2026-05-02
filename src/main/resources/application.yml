@@ -11,10 +11,9 @@ auth:
   jwt.key.set.uri: http://app-iam:8081/oauth2/jwks
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://admin:secret@mongo:27017/reportsdb?authSource=admin
-      database: reportsdb
+  mongodb:
+    uri: mongodb://admin:secret@mongo:27017/reportsdb?authSource=admin
+    database: reportsdb
 app:
   gridfs:
     bucket: reports # GridFS bucket name (prefixes fs.files/fs.chunks)
@@ -30,4 +29,3 @@ logging:
     feign: INFO
   file:
     name: logs/report-service.log
-
