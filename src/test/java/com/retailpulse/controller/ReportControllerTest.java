@@ -113,10 +113,32 @@ class ReportControllerTest {
     }
 
     @Test
+    void getInventoryTransactions_withNullStart_throwsApplicationException() {
+        ApplicationException exception = assertThrows(
+                ApplicationException.class,
+                () -> reportController.getInventoryTransactions(null, "2024-01-02 00:00:00", "yyyy-MM-dd HH:mm:ss")
+        );
+
+        assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
+        assertEquals("Start date time parameter cannot be blank", exception.getMessage());
+    }
+
+    @Test
     void getInventoryTransactions_withBlankEnd_throwsApplicationException() {
         ApplicationException exception = assertThrows(
                 ApplicationException.class,
                 () -> reportController.getInventoryTransactions("2024-01-01 00:00:00", " ", "yyyy-MM-dd HH:mm:ss")
+        );
+
+        assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
+        assertEquals("End date time parameter cannot be blank", exception.getMessage());
+    }
+
+    @Test
+    void getInventoryTransactions_withNullEnd_throwsApplicationException() {
+        ApplicationException exception = assertThrows(
+                ApplicationException.class,
+                () -> reportController.getInventoryTransactions("2024-01-01 00:00:00", null, "yyyy-MM-dd HH:mm:ss")
         );
 
         assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
@@ -192,6 +214,44 @@ class ReportControllerTest {
 
         assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
         assertEquals("Date time parameters cannot be blank", exception.getMessage());
+    }
+
+    @Test
+    void exportInventoryTransactionReport_withBlankEndDate_throwsApplicationException() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        ApplicationException exception = assertThrows(
+                ApplicationException.class,
+                () -> reportController.exportInventoryTransactionReport(
+                        response,
+                        "2024-01-01 00:00:00",
+                        "",
+                        "yyyy-MM-dd HH:mm:ss",
+                        "pdf"
+                )
+        );
+
+        assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
+        assertEquals("Date time parameters cannot be blank", exception.getMessage());
+    }
+
+    @Test
+    void exportInventoryTransactionReport_withInvalidDateFormat_throwsApplicationException() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        ApplicationException exception = assertThrows(
+                ApplicationException.class,
+                () -> reportController.exportInventoryTransactionReport(
+                        response,
+                        "2024/01/01 00:00:00",
+                        "2024/01/02 00:00:00",
+                        "yyyy-MM-dd HH:mm:ss",
+                        "pdf"
+                )
+        );
+
+        assertEquals("INVALID_DATE_RANGE", exception.getErrorCode());
+        assertEquals("Invalid date time format", exception.getMessage());
     }
 
     @Test

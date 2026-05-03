@@ -151,6 +151,48 @@ class FeignConfigTest {
         assertFalse(template.headers().containsKey(HttpHeaders.AUTHORIZATION));
     }
 
+    @Test
+    void interceptor_withoutTracerBeanAndWithoutToken_doesNotSetTracingOrAuthorizationHeaders() {
+        RequestTemplate template = requestTemplate();
+        RequestInterceptor interceptor = new FeignConfig(emptyTracerProvider()).oauth2BearerForwardingInterceptor();
+
+        interceptor.apply(template);
+
+        assertFalse(template.headers().containsKey("X-B3-TraceId"));
+        assertFalse(template.headers().containsKey("X-B3-SpanId"));
+        assertFalse(template.headers().containsKey(HttpHeaders.AUTHORIZATION));
+    }
+
+    @Test
+    void interceptor_withEmptyBearerHeader_doesNotSetAuthorizationHeader() {
+        when(tracer.currentSpan()).thenReturn(null);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        RequestTemplate template = requestTemplate();
+        RequestInterceptor interceptor = new FeignConfig(tracerProvider(tracer)).oauth2BearerForwardingInterceptor();
+
+        interceptor.apply(template);
+
+        assertFalse(template.headers().containsKey(HttpHeaders.AUTHORIZATION));
+    }
+
+    @Test
+    void interceptor_withRequestAttributesButNoAuthorizationHeader_doesNotSetAuthorizationHeader() {
+        when(tracer.currentSpan()).thenReturn(null);
+
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest()));
+
+        RequestTemplate template = requestTemplate();
+        RequestInterceptor interceptor = new FeignConfig(tracerProvider(tracer)).oauth2BearerForwardingInterceptor();
+
+        interceptor.apply(template);
+
+        assertFalse(template.headers().containsKey(HttpHeaders.AUTHORIZATION));
+    }
+
     private RequestTemplate requestTemplate() {
         RequestTemplate template = new RequestTemplate();
         template.method(Request.HttpMethod.GET);
@@ -163,6 +205,13 @@ class FeignConfigTest {
     private static ObjectProvider<Tracer> tracerProvider(Tracer tracer) {
         ObjectProvider<Tracer> tracerProvider = mock(ObjectProvider.class);
         when(tracerProvider.getIfAvailable()).thenReturn(tracer);
+        return tracerProvider;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ObjectProvider<Tracer> emptyTracerProvider() {
+        ObjectProvider<Tracer> tracerProvider = mock(ObjectProvider.class);
+        when(tracerProvider.getIfAvailable()).thenReturn(null);
         return tracerProvider;
     }
 }
